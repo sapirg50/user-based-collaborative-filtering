@@ -50,21 +50,34 @@ def user_questionnaire():
     return user_answer
 
 
-def keep_top_k(arr, k):
-    smallest = heapq.nlargest(k, arr)[-1]
-    # replace anything lower than the cut off with 0
-    arr[arr < smallest] = 0
-    return arr
+def sol_from_top_k(arr, k):
+    dict_count = {}
+    largest = heapq.nlargest(k, arr)
+    for val in largest:
+        val_indices = np.where(arr == val)
+        for val_index in val_indices:
+            val_index = int(val_index)
+            if users_results.iloc[val_index] in dict_count:
+                dict_count[users_results[val_index]] += 1
+            else:
+                dict_count[users_results[val_index]] = 1
+    max_key = max(dict_count, key=dict_count.get)
+    return max_key
+
+
+def normalize_data():
+    for i, q in enumerate(Questions.question_list):
+        if q.function == "replace":
+            # users_data.iloc[:, i]
+            replace_to(user_answers[i], users_data.columns[i])
+        else:
+            min_max_normalization(users_data.iloc[:, i], users_data.columns[i])
 
 
 user_answers = user_questionnaire()
 index, users_results, users_data = get_data(user_answers)
-for i, q in enumerate(Questions.question_list):
-    if q.function == "replace":
-        # users_data.iloc[:, i]
-        replace_to(user_answers[i], users_data.columns[i])
-    else:
-        min_max_normalization(users_data.iloc[:, i], users_data.columns[i])
+normalize_data()
 user_similarity = 1 - pairwise_distances(users_data, metric='euclidean')
-
-# user_similarity = keep_top_k(np.array(user_similarity[index]), 2)
+(user_similarity[index])[index] = np.nan
+predict = sol_from_top_k(user_similarity[index], 3)
+print("המוסד הלימודי שהכי מתאים לך הוא: " + predict)
