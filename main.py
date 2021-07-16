@@ -1,12 +1,8 @@
 import heapq
-
 import Questions
 import pandas as pd
 import numpy as np
 from sklearn.metrics.pairwise import pairwise_distances
-
-import xlrd
-import openpyxl
 
 # globals:
 payment_question = "כמה אתה מעוניין לשלם עבור שכר לימוד בשנה?"
@@ -54,8 +50,8 @@ def user_questionnaire():
 def sol_from_top_k(arr, k):
     dict_count = {}
     largest = heapq.nlargest(k, arr)
-    for val in largest:
-        val_indices = np.where(arr == val)
+    for val in set(largest):
+        val_indices = np.where(arr == val)[0]
         for val_index in val_indices:
             val_index = int(val_index)
             if users_results.iloc[val_index] in dict_count:
