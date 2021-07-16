@@ -13,10 +13,11 @@ payment_question = "כמה אתה מעוניין לשלם עבור שכר לימ
 payment_answers = {"10,000 - 20,000": 1, "20,000 - 30,000": 2, "30,000 - 40,000": 3, "40,000 ומעלה": 4}
 final_question = 'היכן אתה לומד/למדת?'
 academic_institution = ""
+file_name = "train.xlsx"
 
 
 def get_data(user_lst):
-    df = pd.read_excel("train1.xlsx")
+    df = pd.read_excel(file_name)
     # save results and delete from DataFrame
     results = df[final_question]
     df = df.loc[:, df.columns != final_question]
